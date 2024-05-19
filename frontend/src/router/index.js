@@ -6,6 +6,7 @@ import RequestPassword from '@/views/RequestPassword.vue'
 import ResetPassword from '@/views/ResetPassword.vue'
 import Product from '@/views/Product.vue'
 import useUser from '@/composables/useUser'
+import NotFound from '@/views/NotFound.vue'
 
 let user = useUser();
 
@@ -55,6 +56,11 @@ const router = createRouter({
             meta: {
                 requiresGuest: true,
             }
+        },
+        {
+            path: '/:pathMatch(.*)',
+            name: 'not-found',
+            component: NotFound,
         }
     ]
 })
