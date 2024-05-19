@@ -2,6 +2,10 @@
 import { ref,onMounted,onUnmounted } from 'vue';
 import Navbar from './Navbar.vue';
 import Sidebar from './Sidebar.vue';
+import useUser from '@/composables/useUser.js';
+
+const user = useUser();
+
 const { title } = defineProps({
     title: String
 })
@@ -16,6 +20,7 @@ function updateSidebarState(){
 }
 
 onMounted(() => {
+    console.log(user.value.token);
     updateSidebarState();
     window.addEventListener('resize',updateSidebarState)
 })
