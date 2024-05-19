@@ -1,6 +1,6 @@
 <script setup>
-import { ref } from 'vue';
-import TopHeader from './TopHeader.vue';
+import { ref,onMounted,onUnmounted } from 'vue';
+import Navbar from './Navbar.vue';
 import Sidebar from './Sidebar.vue';
 const { title } = defineProps({
     title: String
@@ -11,6 +11,19 @@ function toggleSidebar() {
     sidebarOpened.value = !sidebarOpened.value;
 }
 
+function updateSidebarState(){
+    sidebarOpened.value = window.outerWidth > 768;
+}
+
+onMounted(() => {
+    updateSidebarState();
+    window.addEventListener('resize',updateSidebarState)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', updateSidebarState)
+})
+
 </script>
 <template>
     <div class="min-h-full bg-gray-200 flex">
@@ -19,7 +32,7 @@ function toggleSidebar() {
         <!--/    Sidebar-->
 
         <div class="flex-1">
-            <TopHeader @toggle-sidebar="toggleSidebar"></TopHeader>
+            <Navbar @toggle-sidebar="toggleSidebar"></Navbar>
             <!--      Content-->
             <main class="p-6">
                 <router-view></router-view>
