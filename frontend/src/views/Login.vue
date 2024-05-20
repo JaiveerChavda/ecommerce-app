@@ -1,7 +1,17 @@
 <script setup>
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
 import GuestLayout from "../components/GuestLayout.vue"
-import useSession from "@/composables/useSession";
+import { useRouter } from "vue-router";
+import axios from "axios";
+import { useSessionStore } from "@/store/useSessionStore";
+
+const endpoint = 'http://127.0.0.1:8000/api';
+
+const router = useRouter();
+
+const session = useSessionStore();
+
+const errors = ref([]);
 
 const form = reactive({
     email: '',
@@ -9,18 +19,30 @@ const form = reactive({
     remember: false,
 })
 
-const {errors,storeSession,user} = useSession();
 
-const login = async () => {
-    await storeSession({...form})
+
+async function login (form) {
+    try{
+        let response = await axios.post(`${endpoint}/login`,form);
+        session.setToken(response.data.token);
+        router.push({name:'app.dashboard'});
+    }catch(e){
+        if (e.response && e.response.status == 422) {
+                //get the error message
+                errors.value = e.response.data.message
+            }else{
+                errors.value = e.message
+            }
+    }
+
 }
 
 </script>
 <template>
     <GuestLayout title="Sign in to your account">
         <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-            <form class="space-y-6" action="#" method="POST" @submit.prevent="login">
-                <div v-if="errors" class="flex items-center justify-between py-3 px-5 bg-red-500 text-white rounded">
+            <form class="space-y-6" action="#" method="POST" @submit.prevent="login(form)">
+                <div v-if="errors[0] ?? false" class="flex items-center justify-between py-3 px-5 bg-red-500 text-white rounded">
                     {{ errors }}
                 </div>
                 <div>
@@ -60,13 +82,6 @@ const login = async () => {
                         in</button>
                 </div>
             </form>
-
-            <p class="mt-10 text-center text-sm text-gray-500">
-                Not a member?
-                {{ ' ' }}
-                <a href="#" class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">Start a 14 day free
-                    trial</a>
-            </p>
         </div>
     </GuestLayout>
 </template>

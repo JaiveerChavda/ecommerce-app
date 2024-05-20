@@ -45,10 +45,9 @@ class AuthenticatedSessionController extends Controller
 
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
-        $user = Auth::user();
-        $user->currentAccessToken->delete();
+        $request->user()->currentAccessToken()->delete();
         return response('', 204);
     }
 }

@@ -2,13 +2,7 @@
 import { ref,onMounted,onUnmounted } from 'vue';
 import Navbar from './Navbar.vue';
 import Sidebar from './Sidebar.vue';
-import useUser from '@/composables/useSession.js';
 
-const user = useUser();
-
-const { title } = defineProps({
-    title: String
-})
 const sidebarOpened = ref(true);
 
 function toggleSidebar() {
@@ -20,7 +14,6 @@ function updateSidebarState(){
 }
 
 onMounted(() => {
-    console.log(user.value.token);
     updateSidebarState();
     window.addEventListener('resize',updateSidebarState)
 })
