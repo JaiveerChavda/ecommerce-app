@@ -1,7 +1,7 @@
 import axios from "axios"
 import router from "./router"
 
-import useUser from "./composables/useUser.js"
+import useUser from "./composables/useSession.js"
 
 const user = useUser();
 

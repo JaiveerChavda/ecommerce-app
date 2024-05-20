@@ -17,8 +17,10 @@ class AuthenticatedSessionController extends Controller
             'remember' => ['boolean']
         ]);
 
-        $remember = $credentials['remember'] ?? false;
+        info($credentials);
 
+        $remember = $credentials['remember'] ?? false;
+        unset($credentials['remember']);
         if(!Auth::attempt($credentials, $remember)) {
             return response([
                 'message' => 'Email or password is incorrect'

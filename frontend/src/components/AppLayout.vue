@@ -2,7 +2,7 @@
 import { ref,onMounted,onUnmounted } from 'vue';
 import Navbar from './Navbar.vue';
 import Sidebar from './Sidebar.vue';
-import useUser from '@/composables/useUser.js';
+import useUser from '@/composables/useSession.js';
 
 const user = useUser();
 

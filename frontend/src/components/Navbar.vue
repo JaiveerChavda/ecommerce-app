@@ -1,9 +1,10 @@
 <script setup>
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
 import { Bars3Icon,UserIcon ,ArrowLeftStartOnRectangleIcon} from '@heroicons/vue/24/outline'
-
+import useSession from "@/composables/useSession.js"
 import { ChevronDownIcon } from '@heroicons/vue/16/solid'
 
+const {user} = useSession();
 
 const emit = defineEmits(['toggle-sidebar']);
 </script>
@@ -15,7 +16,7 @@ const emit = defineEmits(['toggle-sidebar']);
       <Menu as="div" class="relative inline-block text-left">
         <MenuButton class="flex items-center">
           <img src="https://randomuser.me/api/portraits/men/1.jpg" class="rounded-full w-8 mr-2">
-          <small>John Smith</small>
+          <small>{{ user.value.name }}</small>
           <ChevronDownIcon
             class="h-5 w-5 text-violet-200 hover:text-violet-100"
             aria-hidden="true"

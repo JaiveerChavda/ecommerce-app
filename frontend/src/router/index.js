@@ -5,10 +5,10 @@ import Login from '@/views/Login.vue'
 import RequestPassword from '@/views/RequestPassword.vue'
 import ResetPassword from '@/views/ResetPassword.vue'
 import Product from '@/views/Product.vue'
-import useUser from '@/composables/useUser'
+import useUser from '@/composables/useSession'
 import NotFound from '@/views/NotFound.vue'
 
-let user = useUser();
+let {user} = useUser();
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
