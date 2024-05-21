@@ -4,27 +4,28 @@ import { Bars3Icon, UserIcon, ArrowLeftStartOnRectangleIcon } from '@heroicons/v
 import { ChevronDownIcon } from '@heroicons/vue/16/solid'
 import { useSessionStore } from '@/store/useSessionStore';
 import { useRouter } from 'vue-router';
-import axios from 'axios';
-
-const endpoint = 'http://127.0.0.1:8000/api';
+import axiosClient from '@/axios';
+import { computed, onMounted } from 'vue';
 
 const router = useRouter();
 
 let session = useSessionStore();
 
+const user = computed(() => session.user.data);
+
 const emit = defineEmits(['toggle-sidebar']);
 
-async function logout() {
-        let response = await axios.post(
-            `${endpoint}/logout`,
-            {},
-            {
-                headers:{
-                    'Authorization': `Bearer ${session.token}`
-                }
-            }
-        );
+onMounted(() => {
+    axiosClient.get('/user').then((response) => {
+        session.setUser(response.data.data);
+        });
+})
+
+
+const logout =  async () => {
+        let response = await axiosClient.post('/logout');
         session.removeToken();
+        session.removeUser();
         router.push({ name: 'login' })
 }
 
@@ -38,7 +39,7 @@ async function logout() {
         <Menu as="div" class="relative inline-block text-left">
             <MenuButton class="flex items-center">
                 <img src="https://randomuser.me/api/portraits/men/1.jpg" class="rounded-full w-8 mr-2">
-                <small>john smith</small>
+                <small>{{ user.name }}</small>
                 <ChevronDownIcon class="h-5 w-5 text-violet-200 hover:text-violet-100" aria-hidden="true" />
             </MenuButton>
 
