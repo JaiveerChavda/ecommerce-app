@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Backend\Auth\AuthenticatedSessionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -19,6 +20,8 @@ Route::middleware('auth:sanctum', 'is_admin')->group(function () {
     Route::get('/user', [AuthenticatedSessionController::class,'getAuthUser']);
 
     Route::post('logout', [AuthenticatedSessionController::class,'logout']);
+
+    Route::apiResource('products', ProductController::class);
 });
 
 
