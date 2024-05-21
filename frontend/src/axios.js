@@ -3,14 +3,13 @@ import router from "./router"
 
 import { useSessionStore } from "./store/useSessionStore";
 
-const session = useSessionStore();
-
 const axiosClient = axios.create({
     baseURL: `${import.meta.env.VITE_API_BASE_URL}/api`
 });
 
 axiosClient.interceptors.request.use(config => {
-    config.headers.Authorization = `Bearer ${session.token}`
+    const session = useSessionStore();
+    config.headers.Authorization = `Bearer ${session.user.token}`
     return config;
 })
 
