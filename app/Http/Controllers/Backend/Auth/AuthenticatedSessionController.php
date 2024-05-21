@@ -17,13 +17,11 @@ class AuthenticatedSessionController extends Controller
             'remember' => ['boolean']
         ]);
 
-        info($credentials);
-
         $remember = $credentials['remember'] ?? false;
         unset($credentials['remember']);
         if(!Auth::attempt($credentials, $remember)) {
             return response([
-                'message' => 'Email or password is incorrect'
+                'message' => "The provided credentials doesn't exists"
             ], 422);
         }
 

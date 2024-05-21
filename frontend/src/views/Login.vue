@@ -20,14 +20,14 @@ const form = reactive({
 })
 
 
-
 async function login (form) {
+    errors.value = ''
     try{
         let response = await axios.post(`${endpoint}/login`,form);
         session.setToken(response.data.token);
         router.push({name:'app.dashboard'});
     }catch(e){
-        if (e.response && e.response.status == 422) {
+        if (e.response && e.response.data) {
                 //get the error message
                 errors.value = e.response.data.message
             }else{
