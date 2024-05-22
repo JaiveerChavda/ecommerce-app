@@ -15,13 +15,6 @@ const user = computed(() => session.user.data);
 
 const emit = defineEmits(['toggle-sidebar']);
 
-onMounted(() => {
-    axiosClient.get('/user').then((response) => {
-        session.setUser(response.data.data);
-        });
-})
-
-
 const logout =  async () => {
         let response = await axiosClient.post('/logout');
         session.removeToken();
