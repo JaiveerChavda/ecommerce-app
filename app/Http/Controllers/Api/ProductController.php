@@ -26,8 +26,6 @@ class ProductController extends Controller
         $sortField = request('sort_field', 'updated_at');
         $sortDirection = request('sort_direction', 'desc');
 
-
-        info($search);
         $products = Product::query()
                     ->where('title', 'like', "%{$search}%")
                     ->orderBy($sortField, $sortDirection)
