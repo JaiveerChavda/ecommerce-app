@@ -25,7 +25,6 @@ class ProductController extends Controller
         $search = request('search', '');
         $sortField = request('sort_field', 'updated_at');
         $sortDirection = request('sort_direction', 'desc');
-
         $products = Product::query()
                     ->where('title', 'like', "%{$search}%")
                     ->orderBy($sortField, $sortDirection)
@@ -66,8 +65,6 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        info($product);
-
         $validator = Validator::make($request->all(), [
             'title' => ['required','max:2000'],
             'description' => ['string'],

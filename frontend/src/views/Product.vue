@@ -1,42 +1,9 @@
 <script setup>
-import axiosClient from '@/axios';
 import Spinner from '@/components/core/Spinner.vue';
-import { onMounted, ref } from 'vue';
-import { PRODUCT_PER_PAGE } from '@/constant';
+import { onMounted } from 'vue';
+import { useProduct } from '@/store/useProductStore';
 
-const products = {
-    products: {},
-    meta: {},
-    link: {},
-}
-
-const data = ref(products);
-
-let loading = false;
-
-const perPage = ref(PRODUCT_PER_PAGE);
-
-const search = ref('');
-
-const getProducts = async (url = null) => {
-    loading = true;
-
-    try {
-        url = url || 'products'
-        let response = await axiosClient.get( url,{
-            params: {search:search.value,per_page: perPage.value}
-        });
-        data.value.products = response.data.data;
-        data.value.link = response.data.link;
-        data.value.meta = response.data.meta;
-    } catch (e) {
-        if (e.response && e.response.status.code == 500) {
-        console.log(e.message)
-        }
-    } finally {
-        loading = false;
-    }
-}
+const prod = useProduct();
 
 const getForPage = function getForPage(e,link){
     e.preventDefault();
@@ -48,8 +15,9 @@ const getForPage = function getForPage(e,link){
 }
 
 onMounted(() => {
-    getProducts();
+    prod.fill();
 })
+
 </script>
 <template>
     <div class="flex items-center justify-between mb-3">
@@ -60,12 +28,12 @@ onMounted(() => {
         </button>
     </div>
     <div class="bg-white p-4 rounded-lg shadow">
-        {{ search }}
+        {{ prod.search }}
 
         <div class="flex justify-between border-b-2 pb-3">
             <div class="flex items-center">
                 <span class="whitespace-nowrap mr-3">Per Page</span>
-                <select @change="getProducts(null)" v-model="perPage"
+                <select @change="prod.fill" v-model="prod.perPage"
                     class="appearance-none relative block w-24 px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm">
                     <option value="5">5</option>
                     <option value="10">10</option>
@@ -75,12 +43,12 @@ onMounted(() => {
                 </select>
             </div>
             <div>
-                <input v-model="search" @change="getProducts(null)"
+                <input v-model="prod.search"  @change="prod.fill"
                     class="appearance-none relative block w-48 px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                     placeholder="Type to Search products">
             </div>
         </div>
-        <Spinner v-if="loading" />
+        <Spinner v-if="prod.loading" />
         <template v-else>
             <table class="table-auto w-full">
                 <thead>
@@ -93,7 +61,7 @@ onMounted(() => {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="product of data.products" :key="product.id">
+                    <tr v-for="product of prod.products.data" :key="product.id">
                         <td class="border-b p-2 ">{{ product.id }}</td>
                         <td class="border-b p-2 ">
                             <img class="w-16" :src="product.image" :alt="product.title">
@@ -115,13 +83,13 @@ onMounted(() => {
 
         <div class="flex justify-between items-center mt-5">
             <span>
-                Showing from {{ data.meta.from }} to {{ data.meta.to }}
+                Showing from {{ prod.products.meta.from }} to {{ prod.products.meta.to }}
             </span>
-            <nav v-if="data.meta.total > data.meta.per_page"
+            <nav v-if="prod.products.meta.total > prod.products.meta.per_page"
                 class="relative z-0 inline-flex justify-center rounded-md shadow-sm -space-x-px"
                 aria-label="Pagination">
                 <!-- Current: "z-10 bg-indigo-50 border-indigo-500 text-indigo-600", Default: "bg-white border-gray-300 text-gray-500 hover:bg-gray-50" -->
-                <a v-for="(link, i) of data.meta.links" :key="i" :disabled="!link.url" href="#"
+                <a v-for="(link, i) of prod.products.meta.links" :key="i" :disabled="!link.url" href="#"
                     @click="getForPage($event, link)" aria-current="page"
                     class="relative inline-flex items-center px-4 py-2 border text-sm font-medium whitespace-nowrap"
                     :class="[
@@ -129,7 +97,7 @@ onMounted(() => {
                             ? 'z-10 bg-indigo-50 border-indigo-500 text-indigo-600'
                             : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50',
                         i === 0 ? 'rounded-l-md' : '',
-                        i === data.meta.links.length - 1 ? 'rounded-r-md' : '',
+                        i === prod.products.meta.links.length - 1 ? 'rounded-r-md' : '',
                         !link.url ? ' bg-gray-100 text-gray-700' : ''
                     ]" v-html="link.label">
                 </a>
