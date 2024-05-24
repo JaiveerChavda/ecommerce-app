@@ -18,8 +18,9 @@ export const useProduct = defineStore('products',{
     },
 
     actions: {
-        async fill(){
-            let res = await axiosClient.get('/products',{
+        async fill(url = null){
+            const requestUrl = url ?? '/products'; // Use the passed URL or default to '/products'
+            let res = await axiosClient.get(requestUrl,{
                 params:{search:this.$state.search,per_page:this.$state.perPage}
             });
             this.products = res.data;
