@@ -1,14 +1,7 @@
 <script setup>
-import { ref,onMounted,onUnmounted,computed } from 'vue';
+import { ref,onMounted,onUnmounted } from 'vue';
 import Navbar from './Navbar.vue';
 import Sidebar from './Sidebar.vue';
-import { useSessionStore } from '@/store/useSessionStore';
-import Spinner from './core/Spinner.vue';
-import axiosClient from '@/axios';
-
-const session = useSessionStore();
-
-const currentUser = computed(() => session.user.data)
 
 const sidebarOpened = ref(true);
 
@@ -23,9 +16,6 @@ function updateSidebarState(){
 onMounted(() => {
     updateSidebarState();
     window.addEventListener('resize',updateSidebarState)
-    axiosClient.get('/user').then((response) => {
-        session.setUser(response.data.data);
-        });
 })
 
 onUnmounted(() => {
@@ -34,7 +24,7 @@ onUnmounted(() => {
 
 </script>
 <template>
-    <div v-if="currentUser.id" class="min-h-full bg-gray-200 flex">
+    <div class="min-h-full bg-gray-200 flex">
         <!--    Sidebar-->
         <Sidebar :class="{'-ml-[200px]': !sidebarOpened}"/>
         <!--/    Sidebar-->
@@ -47,9 +37,5 @@ onUnmounted(() => {
             </main>
             <!--      Content-->
         </div>
-    </div>
-
-    <div v-else class="min-h-full bg-gray-200 flex items-center justify-center">
-        <Spinner />
     </div>
 </template>
