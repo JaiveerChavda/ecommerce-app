@@ -1,13 +1,15 @@
 <script setup>
 import Spinner from '@/components/core/Spinner.vue';
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useProduct } from '@/store/useProductStore';
+import Modal from '@/components/core/Modal.vue';
+import CustomInput from '@/components/core/CustomInput.vue';
 
 const prod = useProduct();
 
-const getForPage = function getForPage(e,link){
+const getForPage = function getForPage(e, link) {
     e.preventDefault();
-    if(!link.url || link.active){
+    if (!link.url || link.active) {
         return
     }
 
@@ -18,11 +20,13 @@ onMounted(() => {
     prod.fill();
 })
 
+const showModal = ref(false);
+
 </script>
 <template>
     <div class="flex items-center justify-between mb-3">
         <h1 class="text-3xl font-semibold">Products</h1>
-        <button type="submit"
+        <button  @click="showModal = true"
             class="flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
             Add new Product
         </button>
@@ -43,7 +47,7 @@ onMounted(() => {
                 </select>
             </div>
             <div>
-                <input v-model="prod.search"  @change="prod.fill()"
+                <input v-model="prod.search" @change="prod.fill()"
                     class="appearance-none relative block w-48 px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                     placeholder="Type to Search products">
             </div>
@@ -68,7 +72,7 @@ onMounted(() => {
                         </td>
                         <td class="border-b p-2 max-w-[200px] whitespace-nowrap overflow-hidden text-ellipsis">{{
                             product.title
-                        }}
+                            }}
                         </td>
                         <td class="border-b p-2">
                             {{ product.price }}
@@ -105,4 +109,39 @@ onMounted(() => {
         </div>
 
     </div>
+
+    <Teleport to="body">
+        <Transition enterFromClass="opacity-0 scale-125" enterToClass="opacity-100 scale-100"
+            enterActiveClass="transition duration-300" leaveActiveClass="transition duration-150"
+            leaveFromClass="opacity-125 scale-100" leaveToClass="opacity-0 scale-125">
+            <Modal :show="showModal" @close="showModal = false">
+                <template #default>
+                    <h1 class="text-3xl font-semibold">Create new Product</h1>
+                    <form action="" class="px-1 py-4">
+                        <div class="flex justify-between" style="gap: 2rem;">
+                            <div class="mt-2 flex-1">
+                               <CustomInput type="text" required="true" label="Title" name="title"></CustomInput>
+                            </div>
+                            <div class="mt-2 flex-1">
+                                <CustomInput type="text" required="true" label="Price" name="price"></CustomInput>
+                            </div>
+                            <div>
+                                <CustomInput type="file" required="true" label="Upload Image" name="image"></CustomInput>
+                            </div>
+                            <div class="mt-2 flex-1">
+                                <CustomInput type="text" required="true" label="Price" name="price"></CustomInput>
+                            </div>
+                        </div>
+
+                        <!-- <input type="text" name="title"> -->
+                        <hr>
+                        <div class="mt-4">
+                            <button type="submit" class="py-2 px-4 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ">Save</button>
+                        </div>
+                    </form>
+                </template>
+            </Modal>
+        </Transition>
+    </Teleport>
+
 </template>
