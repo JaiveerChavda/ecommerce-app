@@ -9,6 +9,9 @@ use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
@@ -42,6 +45,16 @@ class ProductController extends Controller
     public function store(ProductRequest $request)
     {
         $data = $request->validated();
+
+        $image = $data['image'] ?? null;
+
+        if($image) {
+            $relativePath = $this->saveImage($image);
+            $data['image'] = $relativePath;
+            $data['image_mime'] = $image->getClientMimeType();
+            $data['image_size'] = $image->getSize();
+        }
+
         return new ProductResource(Product::create($data));
     }
 
@@ -98,5 +111,18 @@ class ProductController extends Controller
     {
         $product->delete();
         return response()->noContent();
+    }
+
+    private function saveImage(UploadedFile $image)
+    {
+        $path = 'images/' . Str::random();
+        if (!Storage::exists($path)) {
+            Storage::makeDirectory($path, 0755, true);
+        }
+        if (!Storage::putFileAS('public/'.$path, $image, $image->getClientOriginalName())) {
+            throw new \Exception("Unable to save file \"{$image->getClientOriginalName()}\"");
+        }
+
+        return $path . '/' . $image->getClientOriginalName();
     }
 }

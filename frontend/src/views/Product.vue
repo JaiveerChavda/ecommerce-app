@@ -1,6 +1,6 @@
 <script setup>
 import Spinner from '@/components/core/Spinner.vue';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref ,reactive, watch } from 'vue';
 import { useProduct } from '@/store/useProductStore';
 import Modal from '@/components/core/Modal.vue';
 import CustomInput from '@/components/core/CustomInput.vue';
@@ -21,6 +21,32 @@ onMounted(() => {
 })
 
 const showModal = ref(false);
+
+const newProduct = reactive({
+    title: null,
+    price: null,
+    description:null,
+    image: null,
+    imageName: null
+});
+
+
+watch(prod.closeModal,async (closeM) => {
+    if (closeM) {
+        showModal.value = false;
+    }else{
+        showModal.value = true;
+    }
+})
+
+const addProduct = async () => {
+    prod.storeProduct(newProduct)
+}
+
+const handleImg = function(e){
+    newProduct.image = e.target.files[0];
+    newProduct.imageName = newProduct.image.name;
+}
 
 </script>
 <template>
@@ -117,19 +143,19 @@ const showModal = ref(false);
             <Modal :show="showModal" @close="showModal = false">
                 <template #default>
                     <h1 class="text-3xl font-semibold">Create new Product</h1>
-                    <form action="" class="px-1 py-4">
+                    <form action="" class="px-1 py-4" @submit.prevent="addProduct">
                         <div class="flex justify-between" style="gap: 2rem;">
                             <div class="mt-2 flex-1">
-                               <CustomInput type="text" required="true" label="Title" name="title"></CustomInput>
+                               <CustomInput type="text" v-model="newProduct.title" required=true label="Title" name="title"></CustomInput>
                             </div>
                             <div class="mt-2 flex-1">
-                                <CustomInput type="text" required="true" label="Price" name="price"></CustomInput>
+                                <CustomInput type="text" v-model="newProduct.price" required=true label="Price" name="price"></CustomInput>
                             </div>
                             <div>
-                                <CustomInput type="file" required="true" label="Upload Image" name="image"></CustomInput>
+                                <CustomInput type="file" @change="handleImg" required=true label="Upload Image" ref="image" name="image"></CustomInput>
                             </div>
                             <div class="mt-2 flex-1">
-                                <CustomInput type="text" required="true" label="Price" name="price"></CustomInput>
+                                <CustomInput type="textarea" v-model="newProduct.description" label="Description" name="price"></CustomInput>
                             </div>
                         </div>
 
@@ -137,6 +163,7 @@ const showModal = ref(false);
                         <hr>
                         <div class="mt-4">
                             <button type="submit" class="py-2 px-4 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ">Save</button>
+                            <Spinner v-if="prod.loading"></Spinner>
                         </div>
                     </form>
                 </template>
