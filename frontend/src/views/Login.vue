@@ -32,6 +32,7 @@ async function login (form) {
         if (e.response && e.response.data) {
                 //get the error message
                 errors.value = e.response.data.message
+                form.password = ''
             }else{
                 errors.value = e.message
             }
