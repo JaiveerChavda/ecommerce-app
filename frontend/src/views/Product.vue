@@ -1,6 +1,6 @@
 <script setup>
 import Spinner from '@/components/core/Spinner.vue';
-import { onMounted, ref ,reactive, watch } from 'vue';
+import { onMounted, ref, reactive, watch } from 'vue';
 import { useProduct } from '@/store/useProductStore';
 import Modal from '@/components/core/Modal.vue';
 import CustomInput from '@/components/core/CustomInput.vue';
@@ -25,16 +25,16 @@ const showModal = ref(false);
 const newProduct = reactive({
     title: null,
     price: null,
-    description:null,
+    description: null,
     image: null,
     imageName: null
 });
 
 
-watch(prod.closeModal,async (closeM) => {
+watch(prod.closeModal, async (closeM) => {
     if (closeM) {
         showModal.value = false;
-    }else{
+    } else {
         showModal.value = true;
     }
 })
@@ -43,23 +43,26 @@ const addProduct = async () => {
     prod.storeProduct(newProduct)
 }
 
-const handleImg = function(e){
+const handleImg = function (e) {
     newProduct.image = e.target.files[0];
     newProduct.imageName = newProduct.image.name;
 }
 
 </script>
 <template>
+
+    <!-- add new products section -->
     <div class="flex items-center justify-between mb-3">
         <h1 class="text-3xl font-semibold">Products</h1>
-        <button  @click="showModal = true"
+        <button @click="showModal = true"
             class="flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
             Add new Product
         </button>
     </div>
-    <div class="bg-white p-4 rounded-lg shadow">
-        {{ prod.search }}
 
+    <!-- products content -->
+    <div class="bg-white p-4 rounded-lg shadow">
+        <!-- products table search and filter -->
         <div class="flex justify-between border-b-2 pb-3">
             <div class="flex items-center">
                 <span class="whitespace-nowrap mr-3">Per Page</span>
@@ -78,7 +81,9 @@ const handleImg = function(e){
                     placeholder="Type to Search products">
             </div>
         </div>
+        <!-- show spinner -->
         <Spinner v-if="prod.loading" />
+        <!-- else show products table -->
         <template v-else>
             <table class="table-auto w-full">
                 <thead>
@@ -111,6 +116,7 @@ const handleImg = function(e){
             </table>
         </template>
 
+        <!-- products pagination -->
         <div class="flex justify-between items-center mt-5">
             <span>
                 Showing from {{ prod.products.meta.from }} to {{ prod.products.meta.to }}
@@ -136,6 +142,7 @@ const handleImg = function(e){
 
     </div>
 
+    <!-- Add new product modal -->
     <Teleport to="body">
         <Transition enterFromClass="opacity-0 scale-125" enterToClass="opacity-100 scale-100"
             enterActiveClass="transition duration-300" leaveActiveClass="transition duration-150"
@@ -144,25 +151,33 @@ const handleImg = function(e){
                 <template #default>
                     <h1 class="text-3xl font-semibold">Create new Product</h1>
                     <form action="" class="px-1 py-4" @submit.prevent="addProduct">
-                        <div class="flex justify-between" style="gap: 2rem;">
-                            <div class="mt-2 flex-1">
-                               <CustomInput type="text" v-model="newProduct.title" required=true label="Title" name="title"></CustomInput>
+                        <div class="flex flex-col space-y-4" >
+                            <div class="flex gap-3">
+                                    <CustomInput class="flex-1" type="text" v-model="newProduct.title" required=true label="Title"
+                                        name="title"></CustomInput>
+
+                                    <CustomInput class="flex-1"  type="text" v-model="newProduct.price" required=true label="Price"
+                                        name="price"></CustomInput>
+
                             </div>
-                            <div class="mt-2 flex-1">
-                                <CustomInput type="text" v-model="newProduct.price" required=true label="Price" name="price"></CustomInput>
-                            </div>
-                            <div>
-                                <CustomInput type="file" @change="handleImg" required=true label="Upload Image" ref="image" name="image"></CustomInput>
-                            </div>
-                            <div class="mt-2 flex-1">
-                                <CustomInput type="textarea" v-model="newProduct.description" label="Description" name="price"></CustomInput>
+                            <div class="space-y-4">
+                                <div>
+                                    <input type="file" name="image" id="product-image">
+                                </div>
+                                <div class="mt-2 flex-1">
+                                    <CustomInput class="w-3/4" type="textarea" v-model="newProduct.description" label="Description"
+                                        name="price"
+                                        cols="30"
+                                        rows="10"></CustomInput>
+                                </div>
                             </div>
                         </div>
 
                         <!-- <input type="text" name="title"> -->
                         <hr>
                         <div class="mt-4">
-                            <button type="submit" class="py-2 px-4 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ">Save</button>
+                            <button type="submit"
+                                class="py-2 px-4 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ">Save</button>
                             <Spinner v-if="prod.loading"></Spinner>
                         </div>
                     </form>
